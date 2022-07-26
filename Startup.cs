@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Authorization;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure;
-using DotNetCoreRazor_MSGraph.Graph;
+using eventosoutlook.Graph;
 using Microsoft.OpenApi.Models;
 
-namespace DotNetCoreRazor_MSGraph
+namespace eventosoutlook
 {
     public class Startup
     {
@@ -70,9 +70,7 @@ namespace DotNetCoreRazor_MSGraph
                 // Add Microsoft Identity UI pages that provide user 
                 .AddMicrosoftIdentityUI();
             services.AddScoped<GraphProfileClient>();
-            services.AddScoped<GraphEmailClient>();
             services.AddScoped<GraphCalendarClient>();
-            services.AddScoped<GraphFilesClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

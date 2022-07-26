@@ -9,7 +9,7 @@ using Microsoft.Graph;
 using System.Linq;
 using System.Net;
 
-namespace DotNetCoreRazor_MSGraph.Graph
+namespace eventosoutlook.Graph
 {
     public class GraphProfileClient
     {

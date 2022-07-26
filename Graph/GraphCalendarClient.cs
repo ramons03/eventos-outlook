@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net;
 using TimeZoneConverter;
 
-namespace DotNetCoreRazor_MSGraph.Graph
+namespace eventosoutlook.Graph
 {
     public class GraphCalendarClient
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNetCoreRazor_MSGraph.Graph;
+using eventosoutlook.Graph;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 
-namespace DotNetCoreRazor_MSGraph.Pages
+namespace eventosoutlook.Pages
 {
     [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
     public class CalendarModel : PageModel

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>DotNetCoreRazor_MSGraph</RootNamespace>
+    <RootNamespace>eventosoutlook</RootNamespace>
     <UserSecretsId>55ae22f4-c883-4cd7-bf41-fee86d9e22ec</UserSecretsId>
   </PropertyGroup>
 

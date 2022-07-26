@@ -1,5 +1,5 @@
-@using DotNetCoreRazor_MSGraph
-@inject DotNetCoreRazor_MSGraph.Graph.GraphProfileClient GraphProfileClient
+@using eventosoutlook
+@inject eventosoutlook.Graph.GraphProfileClient GraphProfileClient
 @{
     var presenceCssClass = await GraphProfileClient.GetPresenceCssClass();
     var userProfile = await GraphProfileClient.GetUserProfile();
