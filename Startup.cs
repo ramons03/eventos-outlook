@@ -17,7 +17,7 @@ using Azure.Security.KeyVault.Secrets;
 using Azure;
 using eventosoutlook.Graph;
 using Microsoft.OpenApi.Models;
-
+using Microsoft.AspNetCore.HttpOverrides;
 namespace eventosoutlook
 {
     public class Startup
@@ -76,23 +76,32 @@ namespace eventosoutlook
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //    app.UseHsts();
+            //}
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "eventos v1"));
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+    var fordwardedHeaderOptions = new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    };
+    fordwardedHeaderOptions.KnownNetworks.Clear();
+    fordwardedHeaderOptions.KnownProxies.Clear();
+
+    app.UseForwardedHeaders(fordwardedHeaderOptions);
+    
             app.UseAuthentication();
             app.UseAuthorization();
 
