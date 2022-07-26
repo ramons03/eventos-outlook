@@ -8,10 +8,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
+using eventosoutlook.Graph;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace eventosoutlook.Graph
+namespace eventosoutlook.Api
 {
 
     [ApiController]
