@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,67 +27,129 @@ namespace eventosoutlook.Graph
             _graphServiceClient = graphServiceClient;
         }
 
+        [HttpGet]
+        public async Task<IUserCalendarViewCollectionPage> Get(DateTime start, DateTime end)
+        {
+            string userTimeZone = "America/Argentina/Buenos_Aires";//TODO get from config file
 
+            _logger.LogInformation($"User timezone: {userTimeZone}");
+            // Configure a calendar view for the current week
+            //var startOfWeek = DateTime.Now;
+            //var endOfWeek = startOfWeek.AddDays(7);
+
+            var viewOptions = new List<QueryOption>
+            {
+                new QueryOption("startDateTime", start.ToString("yyyy-MM-ddTHH:mm:ss")),
+                new QueryOption("endDateTime",  end.ToString("yyyy-MM-ddTHH:mm:ss"))
+            };
+
+            try
+            {
+                // Use the injected GraphServiceClient object to call Me.CalendarView
+                var calendarEvents = await _graphServiceClient
+                    .Me
+                    .CalendarView
+                    .Request(viewOptions)
+                    .Header("Prefer", $"outlook.timezone=\"{userTimeZone}\"")
+                    .Select(evt => new
+                    {
+                        evt.Subject,
+                        evt.Organizer,
+                        evt.Start,
+                        evt.End
+                    })
+                    .OrderBy("start/DateTime")
+                    .GetAsync();
+
+                return calendarEvents;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error calling Graph /me/calendaview: {ex.Message}");
+                throw;
+            }
+        }
 
         [HttpPost]
         public async Task<HttpResponseMessage> PostAsync(Evento evento)
         {
             var calendars = await _graphServiceClient.Me.Calendars.Request().GetAsync();
+            string timeZone = "America/Argentina/Buenos_Aires";//TODO get from config file
+            var @event = new Event
+            {
+                Subject = evento.Subject,
+                Body = new ItemBody
+                {
+                    ContentType = BodyType.Html,
+                    Content = evento.BodyContent
+                },
+                Start = new DateTimeTimeZone
+                {
+                    DateTime = evento.Start.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    TimeZone = $"{timeZone}"
+                },
+                End = new DateTimeTimeZone
+                {
+                    DateTime = evento.End.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    TimeZone = $"{timeZone}"
+                },
+                Location = new Location
+                {
+                    DisplayName = evento.LocationName
+                },
+                AllowNewTimeProposals = true,
+                TransactionId = Guid.NewGuid().ToString()
+            };
 
-			var @event = new Event
-			{
-				Subject = "Let's go for lunch",
-				Body = new ItemBody
-				{
-					ContentType = BodyType.Html,
-					Content = "Does noon work for you?"
-				},
-				Start = new DateTimeTimeZone
-				{
-					DateTime = "2017-04-15T12:00:00",
-					TimeZone = "Pacific Standard Time"
-				},
-				End = new DateTimeTimeZone
-				{
-					DateTime = "2017-04-15T14:00:00",
-					TimeZone = "Pacific Standard Time"
-				},
-				Location = new Location
-				{
-					DisplayName = "Harry's Bar"
-				},
-				Attendees = new List<Attendee>()
-				{
-					new Attendee
-					{
-						EmailAddress = new EmailAddress
-						{
-							Address = "samanthab@contoso.onmicrosoft.com",
-							Name = "Samantha Booth"
-						},
-						Type = AttendeeType.Required
-					}
-				},
-				AllowNewTimeProposals = true,
-				TransactionId = Guid.NewGuid().ToString()
-			};
+            await _graphServiceClient.Me.Events
+                .Request()
+                .AddAsync(@event);
 
-			await _graphServiceClient.Me.Events
-				.Request()
-				.Header("Prefer", "outlook.timezone=\"Pacific Standard Time\"")
-				.AddAsync(@event);
-
-			return new HttpResponseMessage(HttpStatusCode.Created);
+            return new HttpResponseMessage(HttpStatusCode.Created);
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<HttpResponseMessage> Put(string id, [FromBody] Evento evento)
         {
+            string timeZone = "America/Argentina/Buenos_Aires";//TODO get from config file
+            var @event = new Event
+            {
+                Subject = evento.Subject,
+                Body = new ItemBody
+                {
+                    ContentType = BodyType.Html,
+                    Content = evento.BodyContent
+                },
+                Start = new DateTimeTimeZone
+                {
+                    DateTime = evento.Start.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    TimeZone = $"{timeZone}"
+                },
+                End = new DateTimeTimeZone
+                {
+                    DateTime = evento.End.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    TimeZone = $"{timeZone}"
+                },
+                Location = new Location
+                {
+                    DisplayName = evento.LocationName
+                },
+            };
+
+            await _graphServiceClient.Me.Events[$"{id}"]
+                .Request()
+                .UpdateAsync(@event);
+            return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<HttpResponseMessage> Delete(int id)
         {
+            string timeZone = "America/Argentina/Buenos_Aires";//TODO get from config file
+            await _graphServiceClient.Me.Events[$"{id}"]
+                .Request()
+                .DeleteAsync();
+            return new HttpResponseMessage(HttpStatusCode.OK);
         }
     }
 }

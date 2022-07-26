@@ -86,23 +86,5 @@ namespace eventosoutlook.Graph
             }
         }
 
-        private static DateTime GetUtcStartOfWeekInTimeZone(DateTime today, string timeZoneId)
-        {
-            // Time zone returned by Graph could be Windows or IANA style
-            // .NET Core's FindSystemTimeZoneById needs IANA on Linux/MacOS,
-            // and needs Windows style on Windows.
-            // TimeZoneConverter can handle this for us
-            TimeZoneInfo userTimeZone = TZConvert.GetTimeZoneInfo(timeZoneId);
-
-            // Assumes Sunday as first day of week
-            int diff = System.DayOfWeek.Sunday - today.DayOfWeek;
-
-            // create date as unspecified kind
-            var unspecifiedStart = DateTime.SpecifyKind(today.AddDays(diff), DateTimeKind.Unspecified);
-
-            // convert to UTC
-            return TimeZoneInfo.ConvertTimeToUtc(unspecifiedStart, userTimeZone);
-        }
-
     }
 }
