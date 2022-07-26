@@ -71,6 +71,8 @@ namespace eventosoutlook
                 .AddMicrosoftIdentityUI();
             services.AddScoped<GraphProfileClient>();
             services.AddScoped<GraphCalendarClient>();
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,6 +101,7 @@ namespace eventosoutlook
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
