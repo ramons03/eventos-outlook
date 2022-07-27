@@ -144,7 +144,7 @@ namespace eventosoutlook.Api
         }
 
         [HttpDelete("{id}")]
-        public async Task<HttpResponseMessage> Delete(int id)
+        public async Task<HttpResponseMessage> Delete(string id)
         {
             string timeZone = "America/Argentina/Buenos_Aires";//TODO get from config file
             await _graphServiceClient.Me.Events[$"{id}"]
